@@ -1,0 +1,7 @@
+[backup]
+# please edit
+192.168.1.1
+
+[backup-client]
+# please edit
+192.168.1.2

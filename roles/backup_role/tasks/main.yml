@@ -1,0 +1,5 @@
+---
+# include tasks
+- include: setup_mariadb.yml
+- include: bacula-server_install.yml
+- include: bacula-server_configure.yml

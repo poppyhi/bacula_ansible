@@ -1,0 +1,22 @@
+---
+
+- name: restart firewalld
+  service: name=firewalld state=restarted
+  tags: firewalld
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: restart mariadb
+  service: name=mariadb state=restarted
+  tags: mariadb
+
+- name: restart bacula-dir
+  service: name=bacula-dir state=restarted
+
+- name: restart bacula-sd
+  service: name=bacula-sd state=restarted
+
+- name: restart bacula-fd
+  service: name=bacula-fd state=restarted
+

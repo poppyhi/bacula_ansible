@@ -1,0 +1,63 @@
+---
+- name: check bacula repo
+  stat: path=/etc/yum.repos.d/slaanesh-Bacula-epel-7.repo
+  register: check_bacula_repo
+
+- name: set bacula repo
+  copy: src=slaanesh-Bacula-epel-7.repo dest=/etc/yum.repos.d/slaanesh-Bacula-epel-7.repo owner=root group=root mode=0644
+  when: not check_bacula_repo.stat.exists
+
+- name: install bacula server
+  yum: name={{ item }} state=present
+  with_items:
+    - bacula-director
+    - bacula-client
+    - bacula-storage
+    - bacula-console
+
+- name: check exist baculadb
+  stat: path=/var/lib/mysql/bacula/BaseFiles.frm
+  register: check_exist_baculadb
+
+- name: create bacula table
+  command: /usr/libexec/bacula/make_bacula_tables mysql -u bacula --password={{ bacula_db_password }}
+  when: not check_exist_baculadb.stat.exists
+
+- name: database command change
+  command: alternatives --set libbaccats.so /usr/lib64/libbaccats-mysql.so
+
+- name: make catalog storage directory
+  file: path={{ storage_path }}/catalog owner=bacula group=bacula mode=0755 state=directory
+
+- name: make client1 storage directory
+  file: path={{ storage_path }}/{{ client1 }} owner=bacula group=bacula mode=0755 state=directory
+
+- name: set SELinux
+  command: /sbin/semanage fcontext -a -t bacula_store_t "{{ storage_path }}(/.*)?"
+  tags: selinux
+
+- name: set SELinux restorecon
+  command: /sbin/restorecon -R {{ storage_path }}
+  tags: selinux
+
+
+- name: bacula-sd running 
+  service: name=bacula-sd state=started enabled=yes
+  
+- name: bacula-fd running 
+  service: name=bacula-fd state=started enabled=yes
+  
+- name: bacula-dir running 
+  service: name=bacula-dir state=started enabled=yes
+  
+- name: set firewalld bacula-dir
+  firewalld: zone=public port=9101/tcp permanent=true state=enabled
+  notify: restart firewalld
+
+- name: set firewalld bacula-fd
+  firewalld: zone=public port=9102/tcp permanent=true state=enabled
+  notify: restart firewalld
+
+- name: set firewalld bacula-sd
+  firewalld: zone=public port=9103/tcp permanent=true state=enabled
+  notify: restart firewalld

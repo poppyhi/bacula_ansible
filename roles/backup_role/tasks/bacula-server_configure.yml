@@ -1,0 +1,15 @@
+---
+- name: set bacula-sd.conf
+  template: src=bacula-sd.conf.j2 dest=/etc/bacula/bacula-sd.conf owner=root group=root mode=0640
+  notify: restart bacula-sd
+
+- name: set bacula-fd.conf
+  template: src=bacula-fd.conf.j2 dest=/etc/bacula/bacula-fd.conf owner=root group=root mode=0640
+  notify: restart bacula-fd
+
+- name: set bacula-dir.conf
+  template: src=bacula-dir.conf.j2 dest=/etc/bacula/bacula-dir.conf owner=root group=bacula mode=0640
+  notify: restart bacula-dir
+
+- name: set bconsole.conf
+  template: src=bconsole.conf.j2 dest=/etc/bacula/bconsole.conf owner=root group=root mode=0640

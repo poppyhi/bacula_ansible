@@ -1,0 +1,17 @@
+---
+- name: set bacula repo
+  copy: src=slaanesh-Bacula-epel-7.repo dest=/etc/yum.repos.d/slaanesh-Bacula-epel-7.repo owner=root group=root mode=0644
+
+- name: install bacula client
+  yum: name=bacula-client state=present
+
+- name: set bacula client config
+  template: src=bacula-fd.conf.j2 dest=/etc/bacula/bacula-fd.conf owner=root group=root mode=0640
+  notify: restart bacula-fd
+
+- name: bacula-fd running
+  service: name=bacula-fd state=started enabled=yes
+
+- name: set firewalld bacula-client
+  firewalld: zone=public port=9102/tcp permanent=true state=enabled
+  notify: restart firewalld

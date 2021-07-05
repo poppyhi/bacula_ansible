@@ -1,0 +1,14 @@
+---
+- name: backup role
+  hosts: backup
+  remote_user: ansible
+  sudo: yes
+  roles:
+    - backup_role
+
+- name: backup client role
+  hosts: backup-client
+  remote_user: ansible
+  sudo: yes
+  roles:
+    - backup_client_role

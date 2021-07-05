@@ -1,0 +1,15 @@
+---
+# Variables listed here are applicable to all host groups
+# Please edit
+# db
+mariadb_root_password: password
+bacula_db_password: password
+
+# bacula
+bacula_password: password
+storage_path: /storage
+server_ip: 192.168.1.1 (please edit)
+
+# backup client
+client1: bacula_clt
+client1_ip: 192.168.1.2 (please edit)
